@@ -1,18 +1,42 @@
+//! The `benchmark_functions` crate provides functionality for several functions that are commonly
+//! used to benchmark new optimization algorithms. More specifically, function is part of a struct
+//! that contains the objective function as well as other important information (bounds of the
+//! canonical problem, the known minimum value, and a function that returns the global minimizer.
+
+/// This is a trait that ensures consistent implementation of different benchmark functions
+pub trait Function {
+    /// The bounds of the canonical optimization problem
+    const BOUNDS: (f64, f64);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64;
+
+    /// Function for evaluating the objective function
+    fn f(x: Vec<f64>) -> f64;
+
+    /// This function returns the minimizer (argument that will return the global minimum)
+    fn minimizer(n: usize) -> Vec<f64>;
+}
+
+
 /// This is the Sphere function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Sphere_function_in_3D.pdf/page1-800px-Sphere_function_in_3D.pdf.jpg)
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Sphere_function_in_3D.pdf/page1-800px-Sphere_function_in_3D.pdf.jpg)
 pub struct Sphere {}
 
-impl Sphere {
+impl Function for Sphere {
     /// The bounds of the canonical sphere optimization problem are infinite.
-    pub const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
+    const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
 
     /// The global minimum is constant and zero
-    pub const MINIMUM: f64 = 0.0;
+    const MINIMUM: f64 = 0.0;
 
     /// Function for evaluating
-    pub fn f(x: Vec<f64>) -> f64 {
+    fn f(x: Vec<f64>) -> f64 {
         let mut f = 0f64;
         for i in 0..x.len() {
             f -= x[i] * x[i];
@@ -21,7 +45,7 @@ impl Sphere {
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
-    pub fn minimizer(n: usize) -> Vec<f64> {
+    fn minimizer(n: usize) -> Vec<f64> {
         vec![0.0; n]
     }
 }
@@ -29,18 +53,21 @@ impl Sphere {
 /// This is the Rastrigin function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Rastrigin_function.png/800px-Rastrigin_function.png)
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Rastrigin_function.png/800px-Rastrigin_function.png)
 pub struct Rastrigin {}
 
-impl Rastrigin {
+impl Function for Rastrigin {
     /// The bounds of the canonical sphere optimization problem are infinite.
-    pub const BOUNDS: (f64, f64) = (-5.12, 5.12);
+    const BOUNDS: (f64, f64) = (-5.12, 5.12);
 
     /// The global minimum is constant and zero
-    pub const MINIMUM: f64 = 0.0;
+    const MINIMUM: f64 = 0.0;
 
     /// Function for evaluating
-    pub fn f(x: Vec<f64>) -> f64 {
+    fn f(x: Vec<f64>) -> f64 {
         let a = 10.0;
         let n = x.len() ;
         let mut fx = a*(n as f64);
@@ -52,7 +79,7 @@ impl Rastrigin {
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
-    pub fn minimizer(n: usize) -> Vec<f64> {
+    fn minimizer(n: usize) -> Vec<f64> {
         vec![0.0; n]
     }
 }
@@ -60,18 +87,21 @@ impl Rastrigin {
 /// This is the Rosenbrock function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rosenbrock%27s_function_in_3D.pdf/page1-800px-Rosenbrock%27s_function_in_3D.pdf.jpg)
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rosenbrock%27s_function_in_3D.pdf/page1-800px-Rosenbrock%27s_function_in_3D.pdf.jpg)
 pub struct Rosenbrock {}
 
-impl Rosenbrock {
+impl Function for Rosenbrock {
     /// The bounds of the canonical sphere optimization problem are infinite.
-    pub const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
+    const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
 
     /// The global minimum is constant and zero
-    pub const MINIMUM: f64 = 0.0;
+    const MINIMUM: f64 = 0.0;
 
     /// Function for evaluating
-    pub fn f(x: Vec<f64>) -> f64 {
+    fn f(x: Vec<f64>) -> f64 {
         let n = x.len();
         let mut fx = 0.0;
         for i in 0..(n-1) {
@@ -81,7 +111,7 @@ impl Rosenbrock {
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
-    pub fn minimizer(n: usize) -> Vec<f64> {
+    fn minimizer(n: usize) -> Vec<f64> {
         vec![1.0; n]
     }
 }
@@ -89,18 +119,21 @@ impl Rosenbrock {
 /// This is the Ackley function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
-/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ackley%27s_function.pdf/page1-800px-Ackley%27s_function.pdf.jpg)
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ackley%27s_function.pdf/page1-800px-Ackley%27s_function.pdf.jpg)
 pub struct Ackley {}
 
-impl Ackley {
+impl Function for Ackley {
     /// The bounds of the canonical sphere optimization problem are infinite.
-    pub const BOUNDS: (f64, f64) = (-5.0, 5.0);
+    const BOUNDS: (f64, f64) = (-5.0, 5.0);
 
     /// The global minimum is constant and zero
-    pub const MINIMUM: f64 = 0.0;
+    const MINIMUM: f64 = 0.0;
 
     /// Function for evaluating
-    pub fn f(x: Vec<f64>) -> f64 {
+    fn f(x: Vec<f64>) -> f64 {
         let n=x.len();
         let mut fx = 0.0;
         let mut square_sum = 0.0;
@@ -115,7 +148,177 @@ impl Ackley {
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
-    pub fn minimizer(n: usize) -> Vec<f64> {
+    fn minimizer(n: usize) -> Vec<f64> {
+        vec![0.0; n]
+    }
+}
+
+/// This is the Ackley function.
+///
+/// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Matyas_function.pdf/page1-800px-Matyas_function.pdf.jpg)
+pub struct Matyas {}
+
+impl Function for Matyas {
+    /// The bounds of the canonical sphere optimization problem are infinite.
+    const BOUNDS: (f64, f64) = (-10.0, 10.0);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        let n=x.len();
+        let mut square_sum = 0.0;
+        let mut prod = 1.0;
+        for i in 0..n {
+            square_sum += x[i].powi(2);
+            prod *= x[i];
+        }
+        0.26*square_sum - 0.48*prod
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(n: usize) -> Vec<f64> {
+        vec![0.0; n]
+    }
+}
+
+/// This is the Griewank function.
+///
+/// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/griewankfcn.html).
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/griewankfcn_10_0.png)
+pub struct Griewank {}
+
+impl Function for Griewank {
+    /// The bounds of the canonical sphere optimization problem are infinite.
+    const BOUNDS: (f64, f64) = (-600.0, 600.0);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        let n=x.len();
+        let mut cosine_prod = 1.0;
+        let mut square_sum = 0.0;
+        for i in 0..n {
+            square_sum += x[i].powi(2);
+            cosine_prod *= (x[i]/((i+1) as f64).sqrt()).cos();
+        }
+        1.0 + square_sum/4000.0 - cosine_prod
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(n: usize) -> Vec<f64> {
+        vec![0.0; n]
+    }
+}
+
+/// This is the Ridge function.
+///
+/// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/ridgefcn.html).
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/ridgefcn.png)
+pub struct Ridge {}
+
+impl Function for Ridge {
+    /// The bounds of the canonical sphere optimization problem are infinite.
+    const BOUNDS: (f64, f64) = (-5.0, 5.0);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = -5.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        let n=x.len();
+        let d = 1.0;
+        let alpha = 0.0;
+        let mut square_sum = 0.0;
+        for i in 1..n {
+            square_sum += x[i].powi(2);
+        }
+        -1.0 + x[0] + d*square_sum.powf(alpha)
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(n: usize) -> Vec<f64> {
+        let mut v = vec![0.0; n];
+        v[0] = -5.0;
+        v
+    }
+}
+
+/// This is the Zakharov function.
+///
+/// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/zakharov.html).
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/zakharovfcn.png)
+pub struct Zakharov {}
+
+impl Function for Zakharov {
+    /// The bounds of the canonical sphere optimization problem are infinite.
+    const BOUNDS: (f64, f64) = (-5.0, 10.0);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        let n=x.len();
+        let mut square_sum = 0.0;
+        let mut sum_ixi = 0.0;
+        for i in 0..n {
+            square_sum += x[i].powi(2);
+            sum_ixi += 0.5*x[i]*(i as f64);
+        }
+        square_sum + sum_ixi.powi(2) + sum_ixi.powi(4)
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(n: usize) -> Vec<f64> {
+        vec![0.0; n]
+    }
+}
+
+/// This is the Salomon function.
+///
+/// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/salomonfcn.html).
+/// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
+/// like in 2D:
+///
+/// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/salomonfcn.png)
+pub struct Salomon {}
+
+impl Function for Salomon {
+    /// The bounds of the canonical sphere optimization problem are infinite.
+    const BOUNDS: (f64, f64) = (-100.0, 100.0);
+
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        let n=x.len();
+        let mut square_sum = 0.0;
+        for i in 0..n {
+            square_sum += x[i].powi(2);
+        }
+        1.0 - (2.0*std::f64::consts::PI*square_sum.sqrt()).cos() + 0.1*square_sum.sqrt()
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(n: usize) -> Vec<f64> {
         vec![0.0; n]
     }
 }
@@ -145,13 +348,38 @@ mod two_d_tests {
     fn test_ackley() {
         assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
     }
+
+    #[test]
+    fn test_matyas() {
+        assert_eq!(Matyas::f(Matyas::minimizer(D)), Matyas::MINIMUM)
+    }
+
+    #[test]
+    fn test_griewank() {
+        assert_eq!(Griewank::f(Griewank::minimizer(D)), Griewank::MINIMUM)
+    }
+
+    #[test]
+    fn test_ridge() {
+        assert_eq!(Ridge::f(Ridge::minimizer(D)), Ridge::MINIMUM)
+    }
+
+    #[test]
+    fn test_zakharov() {
+        assert_eq!(Zakharov::f(Zakharov::minimizer(D)), Zakharov::MINIMUM)
+    }
+
+    #[test]
+    fn test_salomon() {
+        assert_eq!(Salomon::f(Salomon::minimizer(D)), Salomon::MINIMUM)
+    }
 }
 
 #[cfg(test)]
 mod high_d_tests {
     use super::*;
 
-    const D: usize = 100;
+    const D: usize = 137;
 
     #[test]
     fn test_sphere() {
@@ -171,5 +399,30 @@ mod high_d_tests {
     #[test]
     fn test_ackley() {
         assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
+    }
+
+    #[test]
+    fn test_matyas() {
+        assert_eq!(Matyas::f(Matyas::minimizer(D)), Matyas::MINIMUM)
+    }
+
+    #[test]
+    fn test_griewank() {
+        assert_eq!(Griewank::f(Griewank::minimizer(D)), Griewank::MINIMUM)
+    }
+
+    #[test]
+    fn test_ridge() {
+        assert_eq!(Ridge::f(Ridge::minimizer(D)), Ridge::MINIMUM)
+    }
+
+    #[test]
+    fn test_zakharov() {
+        assert_eq!(Zakharov::f(Zakharov::minimizer(D)), Zakharov::MINIMUM)
+    }
+
+    #[test]
+    fn test_salomon() {
+        assert_eq!(Salomon::f(Salomon::minimizer(D)), Salomon::MINIMUM)
     }
 }
