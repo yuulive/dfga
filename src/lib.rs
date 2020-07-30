@@ -110,7 +110,7 @@ impl Ackley {
             cosine_sum += (2.0*std::f64::consts::PI*x[i]).cos();
         }
         fx += -20.0*(-0.2*(0.5*square_sum).sqrt()).exp();
-        fx -= (0.5*cosine_sum).exp();
+        fx -= (cosine_sum/(n as f64)).exp();
         fx + std::f64::consts::E + 20.0
     }
 
@@ -124,23 +124,54 @@ impl Ackley {
 mod two_d_tests {
     use super::*;
 
+    const D: usize = 2;
+
     #[test]
     fn test_sphere() {
-        assert_eq!(Sphere::f(Sphere::minimizer(2)), Sphere::MINIMUM)
+        assert_eq!(Sphere::f(Sphere::minimizer(D)), Sphere::MINIMUM)
     }
 
     #[test]
     fn test_rastrigin() {
-        assert_eq!(Rastrigin::f(Rastrigin::minimizer(2)), Rastrigin::MINIMUM)
+        assert_eq!(Rastrigin::f(Rastrigin::minimizer(D)), Rastrigin::MINIMUM)
     }
 
     #[test]
     fn test_rosenbrock() {
-        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(2)), Rosenbrock::MINIMUM)
+        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(D)), Rosenbrock::MINIMUM)
     }
 
     #[test]
     fn test_ackley() {
-        assert_eq!(Ackley::f(Ackley::minimizer(2)), Ackley::MINIMUM)
+        assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
+    }
+}
+
+
+
+#[cfg(test)]
+mod high_d_tests {
+    use super::*;
+
+    const D: usize = 100;
+
+    #[test]
+    fn test_sphere() {
+        assert_eq!(Sphere::f(Sphere::minimizer(D)), Sphere::MINIMUM)
+    }
+
+    #[test]
+    fn test_rastrigin() {
+        assert_eq!(Rastrigin::f(Rastrigin::minimizer(D)), Rastrigin::MINIMUM)
+    }
+
+    #[test]
+    fn test_rosenbrock() {
+        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(D)), Rosenbrock::MINIMUM)
+    }
+
+    #[test]
+    fn test_ackley() {
+        assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
     }
 }
