@@ -1,4 +1,5 @@
 /// This is the Sphere function, borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+///
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Sphere_function_in_3D.pdf/page1-800px-Sphere_function_in_3D.pdf.jpg)
 pub fn sphere(x: Vec<f64>) -> f64 {
     let mut f = 0f64;
@@ -9,6 +10,7 @@ pub fn sphere(x: Vec<f64>) -> f64 {
 }
 
 /// This is the Rastrigin function, borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+///
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Rastrigin_function.png/800px-Rastrigin_function.png)
 pub fn rastrigin(x: Vec<f64>) -> f64 {
     let a = 10.0;
@@ -22,6 +24,7 @@ pub fn rastrigin(x: Vec<f64>) -> f64 {
 }
 
 /// This is the Rosenbrock function, borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+///
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rosenbrock%27s_function_in_3D.pdf/page1-800px-Rosenbrock%27s_function_in_3D.pdf.jpg)
 pub fn rosenbrock(x: Vec<f64>) -> f64 {
     let n = x.len();
@@ -33,6 +36,7 @@ pub fn rosenbrock(x: Vec<f64>) -> f64 {
 }
 
 /// This is the Ackley function, borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+///
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ackley%27s_function.pdf/page1-800px-Ackley%27s_function.pdf.jpg)
 pub fn ackley(x: Vec<f64>) -> f64 {
     let n=x.len();
@@ -49,6 +53,7 @@ pub fn ackley(x: Vec<f64>) -> f64 {
 }
 
 /// This is the Styblinski-Tang function, borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+///
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks like in 2D ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Styblinski-Tang_function.pdf/page1-800px-Styblinski-Tang_function.pdf.jpg)
 pub fn styblinski_tang(x: Vec<f64>) -> f64 {
     let n = x.len();
