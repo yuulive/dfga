@@ -1,17 +1,13 @@
 #![warn(missing_docs)]
 #![warn(missing_doc_code_examples)]
 
-//! The `funky` crate provides functionality for several functions that are commonly
-//! used to benchmark new optimization algorithms. More specifically, function is part of a struct
-//! that contains the objective function as well as other important information (bounds of the
-//! canonical problem, the known minimum value, and a function that returns the global minimizer.
+//! The `benchfun` crate provides several common ***bench***marking ***fun***ctions that are commonly
+//! used to test new optimization algorithms. More specifically, the function is part of a struct
+//! that contains the objective function as well as other important information. Currently a variety
+//! of single-objective and multi-objective functions are implemented.
 
 pub mod multi;
 pub mod single;
-
-/// These are constants used for testing
-const LOW_D: usize = 2;
-const HIGH_D: usize = 137;
 
 /// This is a trait that ensures consistent implementation of single objective benchmark functions
 pub trait SingleObjective {
@@ -32,6 +28,9 @@ pub trait SingleObjective {
 
 /// This is a trait that ensures consistent implementation of multi-objective benchmark functions
 pub trait MultiObjective {
+    /// This constant indicates the number of objectives
+    const NF: usize;
+
     /// Function for evaluating the set of objective functions
     fn f(x: Vec<f64>) -> Vec<f64>;
 }
@@ -93,8 +92,9 @@ pub trait Constrained {
     }
 }
 
-/// This is a trait that ensure consistent implementation of unconstrained benchmark functions
+/// This is a trait that ensures consistent implementation of unconstrained benchmark functions
 pub trait UnConstrained {
+    /// This trait indicates that the function is unconstrained
     const CONSTRAINED: bool = false;
 }
 
@@ -102,6 +102,12 @@ pub trait UnConstrained {
 pub trait NDimensional {
     /// This is a constant containing the correct dimensionality for the function
     const D: usize = usize::MAX;
+
+    /// This constant describes a low value to use for testing
+    const LOW_D: usize = 2;
+
+    /// This constant describes a high value to use for testing
+    const HIGH_D: usize = 137;
 }
 
 /// This is a trait that ensures consistent implementation of benchmark functions with fixed dimensionality

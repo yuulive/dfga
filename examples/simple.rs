@@ -1,5 +1,5 @@
-use benchmark_functions::*;
+use benchfun::*;
 
 fn main() {
-    println!["{}", benchmark_functions::singleobjective::Ackley::f(benchmark_functions::singleobjective::Ackley::minimizer(37))];
+    println!["{}", benchfun::single::Ackley::f(benchfun::single::Ackley::minimizer(37))];
 }

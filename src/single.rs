@@ -1,4 +1,9 @@
-use crate::{NDimensional, UnConstrained, UnBounded, Bounded, SingleObjective, HIGH_D, LOW_D};
+#![warn(missing_docs)]
+#![warn(missing_doc_code_examples)]
+
+//! This module contains single-objective functions
+
+use crate::{NDimensional, UnConstrained, UnBounded, Bounded, SingleObjective, FixedDimensional, Constrained};
 
 /// This is the Sphere function.
 ///
@@ -34,16 +39,16 @@ impl SingleObjective for Sphere {
 
 #[cfg(test)]
 mod sphere_tests {
-    use super::{Sphere as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Sphere as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -88,16 +93,16 @@ impl SingleObjective for Rastrigin {
 
 #[cfg(test)]
 mod rastrigin_tests {
-    use super::{Rastrigin as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Rastrigin as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -140,16 +145,16 @@ impl SingleObjective for Rosenbrock {
 
 #[cfg(test)]
 mod rosenbrock_tests {
-    use super::{Rosenbrock as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Rosenbrock as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -197,16 +202,16 @@ impl SingleObjective for Ackley {
 
 #[cfg(test)]
 mod ackley_tests {
-    use super::{Ackley as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Ackley as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -251,16 +256,16 @@ impl SingleObjective for Matyas {
 
 #[cfg(test)]
 mod matyas_tests {
-    use super::{Matyas as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Matyas as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -305,16 +310,16 @@ impl SingleObjective for Griewank {
 
 #[cfg(test)]
 mod griewank_tests {
-    use super::{Griewank as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Griewank as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -361,16 +366,16 @@ impl SingleObjective for Ridge {
 
 #[cfg(test)]
 mod ridge_tests {
-    use super::{Ridge as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Ridge as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -415,16 +420,16 @@ impl SingleObjective for Zakharov {
 
 #[cfg(test)]
 mod zakharov_tests {
-    use super::{Zakharov as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Zakharov as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
     }
 }
 
@@ -467,15 +472,130 @@ impl SingleObjective for Salomon {
 
 #[cfg(test)]
 mod salomon_tests {
-    use super::{Salomon as F, SingleObjective, LOW_D, HIGH_D};
+    use super::{Salomon as F, NDimensional, SingleObjective};
 
     #[test]
     fn low_d() {
-        F::check_minimizer(LOW_D)
+        F::check_minimizer(F::LOW_D)
     }
 
     #[test]
     fn high_d() {
-        F::check_minimizer(HIGH_D)
+        F::check_minimizer(F::HIGH_D)
+    }
+}
+
+/// This is a constrained version of the Rosenbrock function.
+///
+/// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+/// This function is specifically 2 dimensional, and has a feasible region that looks like this:
+///
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/ConstrTestFunc04.png/664px-ConstrTestFunc04.png)
+pub struct RosenbrockConst1 {}
+
+impl UnBounded for RosenbrockConst1 {}
+
+impl Constrained for RosenbrockConst1 {
+    const NH: usize = 0;
+    const NG: usize = 2;
+
+    fn equality_constraints(_x: Vec<f64>) -> Vec<f64> {
+        vec![0.0; Self::NH]
+    }
+
+    fn inequality_constraints(x: Vec<f64>) -> Vec<f64> {
+        let mut fx: Vec<f64> = vec![0.0; Self::NG];
+        fx[0] = (x[0]-1.0).powi(3) - x[1] + 1.0;
+        fx[1] = x[0] + x[1] - 2.0;
+        fx
+    }
+}
+
+impl FixedDimensional for RosenbrockConst1 {
+    const D: usize = 2;
+}
+
+impl SingleObjective for RosenbrockConst1 {
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        Self::check_input(x.clone());
+        (1.0 - x[0]).powi(2) + 100.0*(x[1] - x[0].powi(2)).powi(2)
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(_n: usize) -> Vec<f64> {
+        vec![1.0; 2]
+    }
+}
+
+#[cfg(test)]
+mod rosenbrock_const1_tests {
+    use super::{RosenbrockConst1 as F, FixedDimensional, SingleObjective};
+
+    #[test]
+    fn low_d() {
+        F::check_minimizer(F::D)
+    }
+}
+
+
+
+/// This is a constrained version of the Rosenbrock function.
+///
+/// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+/// This function is specifically 2 dimensional, and has a feasible region that looks like this:
+///
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/ConstrTestFunc04.png/664px-ConstrTestFunc04.png)
+pub struct RosenbrockConst2 {}
+
+impl UnBounded for RosenbrockConst2 {}
+
+impl Constrained for RosenbrockConst2 {
+    const NH: usize = 0;
+    const NG: usize = 1;
+
+    fn equality_constraints(_x: Vec<f64>) -> Vec<f64> {
+        vec![0.0; Self::NH]
+    }
+
+    fn inequality_constraints(x: Vec<f64>) -> Vec<f64> {
+        let mut fx: Vec<f64> = vec![0.0; Self::NG];
+        fx[0] = x[0].powi(2) + x[1].powi(2) - 2.0;
+        fx
+    }
+}
+
+impl FixedDimensional for RosenbrockConst2 {
+    const D: usize = 2;
+}
+
+impl SingleObjective for RosenbrockConst2 {
+    /// The global minimum is constant and zero
+    const MINIMUM: f64 = 0.0;
+
+    /// Function for evaluating
+    fn f(x: Vec<f64>) -> f64 {
+        Self::check_input(x.clone());
+        (1.0 - x[0]).powi(2) + 100.0*(x[1] - x[0].powi(2)).powi(2)
+    }
+
+    /// This function returns the minimizer (argument that will return the global minimum
+    fn minimizer(_n: usize) -> Vec<f64> {
+        vec![1.0; 2]
+    }
+}
+
+#[cfg(test)]
+mod rosenbrock_const2_tests {
+    use super::{RosenbrockConst2 as F, FixedDimensional, SingleObjective};
+
+    #[test]
+    fn low_d() {
+        F::check_minimizer(F::D)
     }
 }
