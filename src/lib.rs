@@ -1,13 +1,17 @@
+#![warn(missing_docs)]
+#![warn(missing_doc_code_examples)]
+
 //! The `benchmark_functions` crate provides functionality for several functions that are commonly
 //! used to benchmark new optimization algorithms. More specifically, function is part of a struct
 //! that contains the objective function as well as other important information (bounds of the
 //! canonical problem, the known minimum value, and a function that returns the global minimizer.
 
-/// This is a trait that ensures consistent implementation of different benchmark functions
-pub trait Function {
-    /// The bounds of the canonical optimization problem
-    const BOUNDS: (f64, f64);
+/// This is a constant used for low-dimensional testing
+const LOW_D: usize = 2;
+const HIGH_D: usize = 137;
 
+/// This is a trait that ensures consistent implementation of single objective benchmark functions
+pub trait SingleObjective {
     /// The global minimum is constant and zero
     const MINIMUM: f64;
 
@@ -16,12 +20,41 @@ pub trait Function {
 
     /// This function returns the minimizer (argument that will return the global minimum)
     fn minimizer(n: usize) -> Vec<f64>;
+
+    /// This function is used for testing, and checks the correctness of the minimizer
+    fn check_minimizer(d: usize) {
+        assert_eq!(Self::f(Self::minimizer(d)), Self::MINIMUM)
+    }
 }
 
+/// This is a trait that ensures consistent implementation of multi-objective benchmark functions
+pub trait Bounded {
+    /// The bounds of the canonical optimization problem
+    const BOUNDS: (f64, f64);
 
-/// This is a constant used for low-dimensional testing
-const LOW_D: usize = 2;
-const HIGH_D: usize = 137;
+    /// Function to check bounds
+    fn in_bounds(x: Vec<f64>) -> bool {
+        let mut in_bounds = true;
+        for element in x {
+            if (element < Self::BOUNDS.0) || (element > Self::BOUNDS.1) {
+                in_bounds = false;
+                break;
+            }
+        }
+        in_bounds
+    }
+}
+
+/// This is a trait that ensures consistent implementation of multi-objective benchmark functions
+pub trait MultiObjective {
+    /// Function for evaluating the set of objective functions
+    fn f(x: Vec<f64>) -> Vec<f64>;
+}
+
+/// This is a trait that ensures consistent implementation of constrained benchmark functions
+pub trait Constrained {
+
+}
 
 /// This is the Sphere function.
 ///
@@ -32,10 +65,11 @@ const HIGH_D: usize = 137;
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Sphere_function_in_3D.pdf/page1-800px-Sphere_function_in_3D.pdf.jpg)
 pub struct Sphere {}
 
-impl Function for Sphere {
-    /// The bounds of the canonical sphere optimization problem are infinite.
-    const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
+impl Bounded for Sphere {
+    const BOUNDS: (f64, f64) = (-5.12, 5.12);
+}
 
+impl SingleObjective for Sphere {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -56,16 +90,16 @@ impl Function for Sphere {
 
 #[cfg(test)]
 mod sphere_tests {
-    use super::*;
+    use super::{Sphere as F, Bounded, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Sphere::f(Sphere::minimizer(LOW_D)), Sphere::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Sphere::f(Sphere::minimizer(HIGH_D)), Sphere::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -78,10 +112,12 @@ mod sphere_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Rastrigin_function.png/800px-Rastrigin_function.png)
 pub struct Rastrigin {}
 
-impl Function for Rastrigin {
+impl Bounded for Rastrigin {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.12, 5.12);
+}
 
+impl SingleObjective for Rastrigin {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -105,16 +141,16 @@ impl Function for Rastrigin {
 
 #[cfg(test)]
 mod rastrigin_tests {
-    use super::*;
+    use super::{Rastrigin as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Rastrigin::f(Rastrigin::minimizer(LOW_D)), Rastrigin::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Rastrigin::f(Rastrigin::minimizer(HIGH_D)), Rastrigin::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -127,10 +163,12 @@ mod rastrigin_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rosenbrock%27s_function_in_3D.pdf/page1-800px-Rosenbrock%27s_function_in_3D.pdf.jpg)
 pub struct Rosenbrock {}
 
-impl Function for Rosenbrock {
+impl Bounded for Rosenbrock {
     /// The bounds of the canonical sphere optimization problem are infinite.
-    const BOUNDS: (f64, f64) = (-f64::INFINITY, f64::INFINITY);
+    const BOUNDS: (f64, f64) = (-5.0, 10.0);
+}
 
+impl SingleObjective for Rosenbrock {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -152,16 +190,16 @@ impl Function for Rosenbrock {
 
 #[cfg(test)]
 mod rosenbrock_tests {
-    use super::*;
+    use super::{Rosenbrock as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(LOW_D)), Rosenbrock::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(HIGH_D)), Rosenbrock::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -174,10 +212,12 @@ mod rosenbrock_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ackley%27s_function.pdf/page1-800px-Ackley%27s_function.pdf.jpg)
 pub struct Ackley {}
 
-impl Function for Ackley {
+impl Bounded for Ackley {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.0, 5.0);
+}
 
+impl SingleObjective for Ackley {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -204,20 +244,20 @@ impl Function for Ackley {
 
 #[cfg(test)]
 mod ackley_tests {
-    use super::*;
+    use super::{Ackley as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Ackley::f(Ackley::minimizer(LOW_D)), Ackley::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Ackley::f(Ackley::minimizer(HIGH_D)), Ackley::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
-/// This is the Ackley function.
+/// This is the Matyas function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
 /// Although the function accepts a vector with an arbitrary number of inputs, this is what it looks
@@ -226,10 +266,12 @@ mod ackley_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Matyas_function.pdf/page1-800px-Matyas_function.pdf.jpg)
 pub struct Matyas {}
 
-impl Function for Matyas {
+impl Bounded for Matyas {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-10.0, 10.0);
+}
 
+impl SingleObjective for Matyas {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -253,16 +295,16 @@ impl Function for Matyas {
 
 #[cfg(test)]
 mod matyas_tests {
-    use super::*;
+    use super::{Matyas as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Matyas::f(Matyas::minimizer(LOW_D)), Matyas::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Matyas::f(Matyas::minimizer(HIGH_D)), Matyas::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -275,10 +317,12 @@ mod matyas_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/griewankfcn_10_0.png)
 pub struct Griewank {}
 
-impl Function for Griewank {
+impl Bounded for Griewank {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-600.0, 600.0);
+}
 
+impl SingleObjective for Griewank {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -302,16 +346,16 @@ impl Function for Griewank {
 
 #[cfg(test)]
 mod griewank_tests {
-    use super::*;
+    use super::{Griewank as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Griewank::f(Griewank::minimizer(LOW_D)), Griewank::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Griewank::f(Griewank::minimizer(HIGH_D)), Griewank::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -324,23 +368,25 @@ mod griewank_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/ridgefcn.png)
 pub struct Ridge {}
 
-impl Function for Ridge {
+impl Bounded for Ridge {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.0, 5.0);
+}
 
+impl SingleObjective for Ridge {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = -5.0;
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
         let n=x.len();
-        let D = 1.0;
+        let d = 1.0;
         let alpha = 0.0;
         let mut square_sum = 0.0;
         for i in 1..n {
             square_sum += x[i].powi(2);
         }
-        -1.0 + x[0] + D *square_sum.powf(alpha)
+        -1.0 + x[0] + d * square_sum.powf(alpha)
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
@@ -353,16 +399,16 @@ impl Function for Ridge {
 
 #[cfg(test)]
 mod ridge_tests {
-    use super::*;
+    use super::{Ridge as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Ridge::f(Ridge::minimizer(LOW_D)), Ridge::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Ridge::f(Ridge::minimizer(HIGH_D)), Ridge::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -375,10 +421,12 @@ mod ridge_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/zakharovfcn.png)
 pub struct Zakharov {}
 
-impl Function for Zakharov {
+impl Bounded for Zakharov {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.0, 10.0);
+}
 
+impl SingleObjective for Zakharov {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -402,16 +450,16 @@ impl Function for Zakharov {
 
 #[cfg(test)]
 mod zakharov_tests {
-    use super::*;
+    use super::{Zakharov as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Zakharov::f(Zakharov::minimizer(LOW_D)), Zakharov::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Zakharov::f(Zakharov::minimizer(HIGH_D)), Zakharov::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
 
@@ -424,10 +472,12 @@ mod zakharov_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/salomonfcn.png)
 pub struct Salomon {}
 
-impl Function for Salomon {
+impl Bounded for Salomon {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-100.0, 100.0);
+}
 
+impl SingleObjective for Salomon {
     /// The global minimum is constant and zero
     const MINIMUM: f64 = 0.0;
 
@@ -449,15 +499,15 @@ impl Function for Salomon {
 
 #[cfg(test)]
 mod salomon_tests {
-    use super::*;
+    use super::{Salomon as F, SingleObjective, LOW_D, HIGH_D};
 
     #[test]
     fn low_d() {
-        assert_eq!(Salomon::f(Salomon::minimizer(LOW_D)), Salomon::MINIMUM)
+        F::check_minimizer(LOW_D)
     }
 
     #[test]
     fn high_d() {
-        assert_eq!(Salomon::f(Salomon::minimizer(HIGH_D)), Salomon::MINIMUM)
+        F::check_minimizer(HIGH_D)
     }
 }
