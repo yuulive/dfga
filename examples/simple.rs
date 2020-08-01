@@ -1,5 +1,9 @@
+// Import the benchmark library
 use benchfun::*;
 
 fn main() {
-    println!["{}", benchfun::single::Ackley::f(benchfun::single::Ackley::minimizer(37))];
+    // Print some info about the ackley function
+    println!("Minmimum: {:?}", benchfun::single::Ackley::MINIMUM);
+    println!("Minmizer: {:?}", benchfun::single::Ackley::minimizer(5));
+    println!("Minmizer: {:?}", benchfun::single::Ackley::BOUNDS);
 }
