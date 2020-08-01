@@ -550,7 +550,7 @@ mod rosenbrock_const1_tests {
 /// This function is specifically 2 dimensional, and has a feasible region that looks like this:
 ///
 ///
-/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/ConstrTestFunc04.png/664px-ConstrTestFunc04.png)
+/// ![](https://upload.wikimedia.org/wikipedia/commons/3/38/ConstrTestFunc03.png)
 pub struct RosenbrockConst2 {}
 
 impl UnBounded for RosenbrockConst2 {}
