@@ -6,7 +6,7 @@
 //! that contains the objective function as well as other important information (bounds of the
 //! canonical problem, the known minimum value, and a function that returns the global minimizer.
 
-/// This is a constant used for low-dimensional testing
+/// These are constants used for testing
 const LOW_D: usize = 2;
 const HIGH_D: usize = 137;
 
@@ -28,6 +28,12 @@ pub trait SingleObjective {
 }
 
 /// This is a trait that ensures consistent implementation of multi-objective benchmark functions
+pub trait MultiObjective {
+    /// Function for evaluating the set of objective functions
+    fn f(x: Vec<f64>) -> Vec<f64>;
+}
+
+/// This is a trait that ensures consistent implementation of bounded benchmark functions
 pub trait Bounded {
     /// The bounds of the canonical optimization problem
     const BOUNDS: (f64, f64);
@@ -45,15 +51,67 @@ pub trait Bounded {
     }
 }
 
-/// This is a trait that ensures consistent implementation of multi-objective benchmark functions
-pub trait MultiObjective {
-    /// Function for evaluating the set of objective functions
-    fn f(x: Vec<f64>) -> Vec<f64>;
+/// This is a trait that ensures consistent implementation of unbounded benchmark functions
+pub trait UnBounded {
+    /// The bounds of the canonical optimization problem
+    const BOUNDS: (f64, f64) = (f64::INFINITY, f64::INFINITY);
+
+    /// Function to check bounds
+    fn in_bounds(_x: Vec<f64>) -> bool {
+        true
+    }
 }
 
 /// This is a trait that ensures consistent implementation of constrained benchmark functions
 pub trait Constrained {
+    /// This constant indicates a constrained function
+    const CONSTRAINED: bool = true;
 
+    /// This constant indicates the number of equality functions
+    const NH: usize;
+
+    /// This constant indicates the number of inequality functions
+    const NG: usize;
+
+    /// This function returns the value of equality constraints
+    fn equality_constraints(x: Vec<f64>) -> Vec<f64>;
+
+    /// This function returns the value of inequality constraints
+    fn inequality_constraints(x: Vec<f64>) -> Vec<f64>;
+
+    /// This is an alias for the equality constraint function
+    fn h(x: Vec<f64>) -> Vec<f64> {
+        Self::equality_constraints(x)
+    }
+
+    /// This is an alias for the inequality constraint function
+    fn g(x: Vec<f64>) -> Vec<f64> {
+        Self::inequality_constraints(x)
+    }
+}
+
+/// This is a trait that ensure consistent implementation of unconstrained benchmark functions
+pub trait UnConstrained {
+    const CONSTRAINED: bool = false;
+}
+
+/// This is a trait that ensures consistent implementation of N-dimensional benchmark functions
+pub trait NDimensional {
+    /// This is a constant containing the correct dimensionality for the function
+    const D: usize = usize::MAX;
+}
+
+/// This is a trait that ensures consistent implementation of benchmark functions with fixed dimensionality
+pub trait FixedDimensional {
+    /// This is a constant containing the correct dimensionality for the function
+    const D: usize;
+
+    /// This function is used to check inputs
+    fn check_input(x: Vec<f64>){
+        if x.len() != Self::D {
+            panic!("A vector with size {} was used with a function of dimensionality {}.", x.len(), Self::D);
+        }
+    }
 }
 
 /// This is the Sphere function.
@@ -65,9 +123,9 @@ pub trait Constrained {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Sphere_function_in_3D.pdf/page1-800px-Sphere_function_in_3D.pdf.jpg)
 pub struct Sphere {}
 
-impl Bounded for Sphere {
-    const BOUNDS: (f64, f64) = (-5.12, 5.12);
-}
+impl NDimensional for Sphere {}
+impl UnConstrained for Sphere {}
+impl UnBounded for Sphere {}
 
 impl SingleObjective for Sphere {
     /// The global minimum is constant and zero
@@ -111,6 +169,9 @@ mod sphere_tests {
 ///
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Rastrigin_function.png/800px-Rastrigin_function.png)
 pub struct Rastrigin {}
+
+impl NDimensional for Rastrigin {}
+impl UnConstrained for Rastrigin {}
 
 impl Bounded for Rastrigin {
     /// The bounds of the canonical sphere optimization problem are infinite.
@@ -163,6 +224,9 @@ mod rastrigin_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Rosenbrock%27s_function_in_3D.pdf/page1-800px-Rosenbrock%27s_function_in_3D.pdf.jpg)
 pub struct Rosenbrock {}
 
+impl NDimensional for Rosenbrock {}
+impl UnConstrained for Rosenbrock {}
+
 impl Bounded for Rosenbrock {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.0, 10.0);
@@ -211,6 +275,9 @@ mod rosenbrock_tests {
 ///
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Ackley%27s_function.pdf/page1-800px-Ackley%27s_function.pdf.jpg)
 pub struct Ackley {}
+
+impl NDimensional for Ackley {}
+impl UnConstrained for Ackley {}
 
 impl Bounded for Ackley {
     /// The bounds of the canonical sphere optimization problem are infinite.
@@ -266,6 +333,9 @@ mod ackley_tests {
 /// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Matyas_function.pdf/page1-800px-Matyas_function.pdf.jpg)
 pub struct Matyas {}
 
+impl NDimensional for Matyas {}
+impl UnConstrained for Matyas {}
+
 impl Bounded for Matyas {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-10.0, 10.0);
@@ -317,6 +387,9 @@ mod matyas_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/griewankfcn_10_0.png)
 pub struct Griewank {}
 
+impl NDimensional for Griewank {}
+impl UnConstrained for Griewank {}
+
 impl Bounded for Griewank {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-600.0, 600.0);
@@ -367,6 +440,9 @@ mod griewank_tests {
 ///
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/ridgefcn.png)
 pub struct Ridge {}
+
+impl NDimensional for Ridge {}
+impl UnConstrained for Ridge {}
 
 impl Bounded for Ridge {
     /// The bounds of the canonical sphere optimization problem are infinite.
@@ -421,6 +497,9 @@ mod ridge_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/zakharovfcn.png)
 pub struct Zakharov {}
 
+impl NDimensional for Zakharov {}
+impl UnConstrained for Zakharov {}
+
 impl Bounded for Zakharov {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-5.0, 10.0);
@@ -472,6 +551,9 @@ mod zakharov_tests {
 /// ![](http://benchmarkfcns.xyz/benchmarkfcns/plots/salomonfcn.png)
 pub struct Salomon {}
 
+impl NDimensional for Salomon {}
+impl UnConstrained for Salomon {}
+
 impl Bounded for Salomon {
     /// The bounds of the canonical sphere optimization problem are infinite.
     const BOUNDS: (f64, f64) = (-100.0, 100.0);
@@ -509,5 +591,66 @@ mod salomon_tests {
     #[test]
     fn high_d() {
         F::check_minimizer(HIGH_D)
+    }
+}
+
+/// This is the Chankong-Haimes function.
+///
+/// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
+/// This function is specificaly 2 dimensional, and has a Pareto fron that looks like this:
+///
+/// ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Chakong_and_Haimes_function.pdf/page1-796px-Chakong_and_Haimes_function.pdf.jpg)
+pub struct ChankongHaimes {}
+
+impl FixedDimensional for ChankongHaimes {
+    const D: usize = 2;
+}
+
+impl Constrained for ChankongHaimes {
+    const NH: usize = 0;
+    const NG: usize = 2;
+
+    fn equality_constraints(_x: Vec<f64>) -> Vec<f64> {
+        vec![0.0; Self::NH]
+    }
+
+    fn inequality_constraints(x: Vec<f64>) -> Vec<f64> {
+        let mut fx: Vec<f64> = vec![0.0; Self::NG];
+        fx[0] = x[0].powi(2) + x[1].powi(2) - 225.0;
+        fx[1] = x[0] - 3.0*x[1] + 10.0;
+        fx
+    }
+}
+
+impl MultiObjective for ChankongHaimes {
+    fn f(x: Vec<f64>) -> Vec<f64> {
+        Self::check_input(x.clone());
+        let mut fx: Vec<f64> = vec![0.0; Self::D];
+        fx[0] = 2.0 + (x[0] - 2.0).powi(2) - (x[1] - 1.0).powi(2);
+        fx[1] = 9.0*x[0] - (x[1] - 1.0).powi(2);
+        fx
+    }
+}
+
+#[cfg(test)]
+mod chankong_haimes_tests {
+    use super::*;
+
+    #[test]
+    fn check_zero() {
+        let x = vec![0.0; ChankongHaimes::D];
+        ChankongHaimes::f(x.clone());
+        ChankongHaimes::equality_constraints(x.clone());
+        ChankongHaimes::inequality_constraints(x);
+        assert!(true);
+    }
+
+    #[test]
+    fn check_one() {
+        let x = vec![1.0; ChankongHaimes::D];
+        ChankongHaimes::f(x.clone());
+        ChankongHaimes::equality_constraints(x.clone());
+        ChankongHaimes::inequality_constraints(x);
+        assert!(true);
     }
 }
