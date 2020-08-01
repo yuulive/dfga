@@ -19,6 +19,10 @@ pub trait Function {
 }
 
 
+/// This is a constant used for low-dimensional testing
+const LOW_D: usize = 2;
+const HIGH_D: usize = 137;
+
 /// This is the Sphere function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
@@ -47,6 +51,21 @@ impl Function for Sphere {
     /// This function returns the minimizer (argument that will return the global minimum
     fn minimizer(n: usize) -> Vec<f64> {
         vec![0.0; n]
+    }
+}
+
+#[cfg(test)]
+mod sphere_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Sphere::f(Sphere::minimizer(LOW_D)), Sphere::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Sphere::f(Sphere::minimizer(HIGH_D)), Sphere::MINIMUM)
     }
 }
 
@@ -84,6 +103,21 @@ impl Function for Rastrigin {
     }
 }
 
+#[cfg(test)]
+mod rastrigin_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Rastrigin::f(Rastrigin::minimizer(LOW_D)), Rastrigin::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Rastrigin::f(Rastrigin::minimizer(HIGH_D)), Rastrigin::MINIMUM)
+    }
+}
+
 /// This is the Rosenbrock function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
@@ -113,6 +147,21 @@ impl Function for Rosenbrock {
     /// This function returns the minimizer (argument that will return the global minimum
     fn minimizer(n: usize) -> Vec<f64> {
         vec![1.0; n]
+    }
+}
+
+#[cfg(test)]
+mod rosenbrock_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(LOW_D)), Rosenbrock::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(HIGH_D)), Rosenbrock::MINIMUM)
     }
 }
 
@@ -153,6 +202,21 @@ impl Function for Ackley {
     }
 }
 
+#[cfg(test)]
+mod ackley_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Ackley::f(Ackley::minimizer(LOW_D)), Ackley::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Ackley::f(Ackley::minimizer(HIGH_D)), Ackley::MINIMUM)
+    }
+}
+
 /// This is the Ackley function.
 ///
 /// The function is borrowed from [here](https://en.wikipedia.org/wiki/Test_functions_for_optimization).
@@ -184,6 +248,21 @@ impl Function for Matyas {
     /// This function returns the minimizer (argument that will return the global minimum
     fn minimizer(n: usize) -> Vec<f64> {
         vec![0.0; n]
+    }
+}
+
+#[cfg(test)]
+mod matyas_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Matyas::f(Matyas::minimizer(LOW_D)), Matyas::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Matyas::f(Matyas::minimizer(HIGH_D)), Matyas::MINIMUM)
     }
 }
 
@@ -221,6 +300,21 @@ impl Function for Griewank {
     }
 }
 
+#[cfg(test)]
+mod griewank_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Griewank::f(Griewank::minimizer(LOW_D)), Griewank::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Griewank::f(Griewank::minimizer(HIGH_D)), Griewank::MINIMUM)
+    }
+}
+
 /// This is the Ridge function.
 ///
 /// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/ridgefcn.html).
@@ -240,13 +334,13 @@ impl Function for Ridge {
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
         let n=x.len();
-        let d = 1.0;
+        let D = 1.0;
         let alpha = 0.0;
         let mut square_sum = 0.0;
         for i in 1..n {
             square_sum += x[i].powi(2);
         }
-        -1.0 + x[0] + d*square_sum.powf(alpha)
+        -1.0 + x[0] + D *square_sum.powf(alpha)
     }
 
     /// This function returns the minimizer (argument that will return the global minimum
@@ -254,6 +348,21 @@ impl Function for Ridge {
         let mut v = vec![0.0; n];
         v[0] = -5.0;
         v
+    }
+}
+
+#[cfg(test)]
+mod ridge_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Ridge::f(Ridge::minimizer(LOW_D)), Ridge::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Ridge::f(Ridge::minimizer(HIGH_D)), Ridge::MINIMUM)
     }
 }
 
@@ -291,6 +400,21 @@ impl Function for Zakharov {
     }
 }
 
+#[cfg(test)]
+mod zakharov_tests {
+    use super::*;
+
+    #[test]
+    fn low_d() {
+        assert_eq!(Zakharov::f(Zakharov::minimizer(LOW_D)), Zakharov::MINIMUM)
+    }
+
+    #[test]
+    fn high_d() {
+        assert_eq!(Zakharov::f(Zakharov::minimizer(HIGH_D)), Zakharov::MINIMUM)
+    }
+}
+
 /// This is the Salomon function.
 ///
 /// The function is borrowed from [here](http://benchmarkfcns.xyz/benchmarkfcns/salomonfcn.html).
@@ -324,105 +448,16 @@ impl Function for Salomon {
 }
 
 #[cfg(test)]
-mod two_d_tests {
+mod salomon_tests {
     use super::*;
 
-    const D: usize = 2;
-
     #[test]
-    fn test_sphere() {
-        assert_eq!(Sphere::f(Sphere::minimizer(D)), Sphere::MINIMUM)
+    fn low_d() {
+        assert_eq!(Salomon::f(Salomon::minimizer(LOW_D)), Salomon::MINIMUM)
     }
 
     #[test]
-    fn test_rastrigin() {
-        assert_eq!(Rastrigin::f(Rastrigin::minimizer(D)), Rastrigin::MINIMUM)
-    }
-
-    #[test]
-    fn test_rosenbrock() {
-        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(D)), Rosenbrock::MINIMUM)
-    }
-
-    #[test]
-    fn test_ackley() {
-        assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
-    }
-
-    #[test]
-    fn test_matyas() {
-        assert_eq!(Matyas::f(Matyas::minimizer(D)), Matyas::MINIMUM)
-    }
-
-    #[test]
-    fn test_griewank() {
-        assert_eq!(Griewank::f(Griewank::minimizer(D)), Griewank::MINIMUM)
-    }
-
-    #[test]
-    fn test_ridge() {
-        assert_eq!(Ridge::f(Ridge::minimizer(D)), Ridge::MINIMUM)
-    }
-
-    #[test]
-    fn test_zakharov() {
-        assert_eq!(Zakharov::f(Zakharov::minimizer(D)), Zakharov::MINIMUM)
-    }
-
-    #[test]
-    fn test_salomon() {
-        assert_eq!(Salomon::f(Salomon::minimizer(D)), Salomon::MINIMUM)
-    }
-}
-
-#[cfg(test)]
-mod high_d_tests {
-    use super::*;
-
-    const D: usize = 137;
-
-    #[test]
-    fn test_sphere() {
-        assert_eq!(Sphere::f(Sphere::minimizer(D)), Sphere::MINIMUM)
-    }
-
-    #[test]
-    fn test_rastrigin() {
-        assert_eq!(Rastrigin::f(Rastrigin::minimizer(D)), Rastrigin::MINIMUM)
-    }
-
-    #[test]
-    fn test_rosenbrock() {
-        assert_eq!(Rosenbrock::f(Rosenbrock::minimizer(D)), Rosenbrock::MINIMUM)
-    }
-
-    #[test]
-    fn test_ackley() {
-        assert_eq!(Ackley::f(Ackley::minimizer(D)), Ackley::MINIMUM)
-    }
-
-    #[test]
-    fn test_matyas() {
-        assert_eq!(Matyas::f(Matyas::minimizer(D)), Matyas::MINIMUM)
-    }
-
-    #[test]
-    fn test_griewank() {
-        assert_eq!(Griewank::f(Griewank::minimizer(D)), Griewank::MINIMUM)
-    }
-
-    #[test]
-    fn test_ridge() {
-        assert_eq!(Ridge::f(Ridge::minimizer(D)), Ridge::MINIMUM)
-    }
-
-    #[test]
-    fn test_zakharov() {
-        assert_eq!(Zakharov::f(Zakharov::minimizer(D)), Zakharov::MINIMUM)
-    }
-
-    #[test]
-    fn test_salomon() {
-        assert_eq!(Salomon::f(Salomon::minimizer(D)), Salomon::MINIMUM)
+    fn high_d() {
+        assert_eq!(Salomon::f(Salomon::minimizer(HIGH_D)), Salomon::MINIMUM)
     }
 }
