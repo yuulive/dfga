@@ -1,6 +1,3 @@
-#![warn(missing_docs)]
-#![warn(missing_doc_code_examples)]
-
 //! This module contains multi-objective functions
 
 use crate::{FixedDimensional, NDimensional, UnConstrained, Constrained, MultiObjective, Bounded};
@@ -98,9 +95,9 @@ impl MultiObjective for FonsecaFlemming {
         let mut sumxminus: f64 = 0.0;
         let mut sumxplus: f64 = 0.0;
         let nsqrt = (n as f64).sqrt();
-        for i in 0..n {
-            sumxminus += (x[i] - 1.0/nsqrt).powi(2);
-            sumxplus += (x[i] + 1.0/nsqrt).powi(2);
+        for xi in x {
+            sumxminus += (xi - 1.0/nsqrt).powi(2);
+            sumxplus += (xi + 1.0/nsqrt).powi(2);
         }
         fx[0] = 1.0 - (-sumxminus).exp();
         fx[1] = 1.0 - (-sumxplus).exp();

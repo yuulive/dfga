@@ -1,6 +1,3 @@
-#![warn(missing_docs)]
-#![warn(missing_doc_code_examples)]
-
 //! This module contains single-objective functions
 
 use crate::{NDimensional, UnConstrained, UnBounded, Bounded, SingleObjective, FixedDimensional, Constrained};
@@ -25,8 +22,8 @@ impl SingleObjective for Sphere {
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
         let mut f = 0f64;
-        for i in 0..x.len() {
-            f -= x[i] * x[i];
+        for xi in x {
+            f -= xi.powi(2);
         }
         f
     }
@@ -79,8 +76,8 @@ impl SingleObjective for Rastrigin {
         let n = x.len() ;
         let mut fx = a*(n as f64);
 
-        for i in 0..n {
-            fx += x[i].powi(2) - a*(2.0*x[i]*std::f64::consts::PI).cos();
+        for xi in x {
+            fx += xi.powi(2) - a*(2.0*xi*std::f64::consts::PI).cos();
         }
         fx
     }
@@ -185,9 +182,9 @@ impl SingleObjective for Ackley {
         let mut fx = 0.0;
         let mut square_sum = 0.0;
         let mut cosine_sum = 0.0;
-        for i in 0..n {
-            square_sum += x[i].powi(2);
-            cosine_sum += (2.0*std::f64::consts::PI*x[i]).cos();
+        for xi in x {
+            square_sum += xi.powi(2);
+            cosine_sum += (2.0*std::f64::consts::PI*xi).cos();
         }
         fx += -20.0*(-0.2*(0.5*square_sum).sqrt()).exp();
         fx -= (cosine_sum/(n as f64)).exp();
@@ -238,12 +235,11 @@ impl SingleObjective for Matyas {
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
-        let n=x.len();
         let mut square_sum = 0.0;
         let mut prod = 1.0;
-        for i in 0..n {
-            square_sum += x[i].powi(2);
-            prod *= x[i];
+        for xi in x {
+            square_sum += xi.powi(2);
+            prod *= xi;
         }
         0.26*square_sum - 0.48*prod
     }
@@ -292,12 +288,11 @@ impl SingleObjective for Griewank {
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
-        let n=x.len();
         let mut cosine_prod = 1.0;
         let mut square_sum = 0.0;
-        for i in 0..n {
-            square_sum += x[i].powi(2);
-            cosine_prod *= (x[i]/((i+1) as f64).sqrt()).cos();
+        for (i, xi) in x.iter().enumerate() {
+            square_sum += xi.powi(2);
+            cosine_prod *= (xi/((i+1) as f64).sqrt()).cos();
         }
         1.0 + square_sum/4000.0 - cosine_prod
     }
@@ -346,12 +341,11 @@ impl SingleObjective for Ridge {
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
-        let n=x.len();
         let d = 1.0;
         let alpha = 0.0;
         let mut square_sum = 0.0;
-        for i in 1..n {
-            square_sum += x[i].powi(2);
+        for xi in x.iter().skip(1) {
+            square_sum += xi.powi(2);
         }
         -1.0 + x[0] + d * square_sum.powf(alpha)
     }
@@ -402,12 +396,11 @@ impl SingleObjective for Zakharov {
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
-        let n=x.len();
-        let mut square_sum = 0.0;
-        let mut sum_ixi = 0.0;
-        for i in 0..n {
-            square_sum += x[i].powi(2);
-            sum_ixi += 0.5*x[i]*(i as f64);
+        let mut square_sum: f64 = 0.0;
+        let mut sum_ixi: f64 = 0.0;
+        for (i, xi) in x.iter().enumerate() {
+            square_sum += xi.powi(2);
+            sum_ixi += 0.5*xi*(i as f64);
         }
         square_sum + sum_ixi.powi(2) + sum_ixi.powi(4)
     }
@@ -456,10 +449,9 @@ impl SingleObjective for Salomon {
 
     /// Function for evaluating
     fn f(x: Vec<f64>) -> f64 {
-        let n=x.len();
         let mut square_sum = 0.0;
-        for i in 0..n {
-            square_sum += x[i].powi(2);
+        for xi in x {
+            square_sum += xi.powi(2);
         }
         1.0 - (2.0*std::f64::consts::PI*square_sum.sqrt()).cos() + 0.1*square_sum.sqrt()
     }

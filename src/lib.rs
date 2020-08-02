@@ -1,5 +1,6 @@
 #![warn(missing_docs)]
 #![warn(missing_doc_code_examples)]
+#![warn(clippy::all)]
 
 //! The `benchfun` crate provides several common ***bench***marking ***fun***ctions that are commonly
 //! used to test new optimization algorithms. More specifically, the function is part of a struct
@@ -22,7 +23,7 @@ pub trait SingleObjective {
 
     /// This function is used for testing, and checks the correctness of the minimizer
     fn check_minimizer(d: usize) {
-        assert_eq!(Self::f(Self::minimizer(d)), Self::MINIMUM)
+        assert!(Self::f(Self::minimizer(d)) - Self::MINIMUM < f64::EPSILON)
     }
 }
 
