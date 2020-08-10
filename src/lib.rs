@@ -8,10 +8,13 @@
 //! of single-objective and multi-objective functions are implemented.
 
 pub mod multi;
+pub use multi::*;
 pub mod single;
+pub use single::*;
+
 
 /// This is a trait that ensures consistent implementation of single objective benchmark functions
-pub trait SingleObjective {
+pub trait SingleObjective  {
     /// The global minimum is constant and zero
     const MINIMUM: f64;
 

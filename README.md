@@ -12,8 +12,11 @@ Using this crate is easy! Simply add this crate as a dependency and then `use` i
 ``` 
 use benchfun::*;
 
-let fx = benchfun::single::Ackley::f(vec![0.0; 3]);
-println!("{}", fx);
-
+fn main() {
+    // Print some info about the ackley function
+    println!("Minmimum: {:?}", Ackley::MINIMUM);
+    println!("Minmizer: {:?}", Ackley::minimizer(5));
+    println!("Minmizer: {:?}", single::Ackley::BOUNDS);
+}
 ```
 You can also use a `use` statement that looks more like `use benchfun::{SingleObjective}` but that's just messy!
