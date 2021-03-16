@@ -1,5 +1,5 @@
 // Import the benchmark library
-use benchfun::*;
+use ka::*;
 
 fn main() {
     // Print some info about the ackley function

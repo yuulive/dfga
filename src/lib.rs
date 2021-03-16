@@ -2,7 +2,7 @@
 #![warn(missing_doc_code_examples)]
 #![warn(clippy::all)]
 
-//! The `benchfun` crate provides several common ***bench***marking ***fun***ctions that are commonly
+//! The `ka` crate provides several common ***bench***marking ***fun***ctions that are commonly
 //! used to test new optimization algorithms. More specifically, the function is part of a struct
 //! that contains the objective function as well as other important information. Currently a variety
 //! of single-objective and multi-objective functions are implemented.
